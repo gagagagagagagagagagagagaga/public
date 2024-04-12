@@ -15,9 +15,9 @@ jobs:
       - name: Pre-auth SSH
         run: |
           mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_AUTH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_AUTH_KEY }}" > ~/.ssh/id_rsa_github
+          chmod 600 ~/.ssh/id_rsa_github
           ssh-keyscan -p 1022 -H ${{ secrets.SERVER_IP_ADDRESS }} >> ~/.ssh/known_hosts
       - name: Copy files to server
         run: |
-          rsync -rv  ./* ${{ secrets.SSH_LOGIN_PAIR }}:/www/apache/domains/www.failover.ee/htdocs/ga
+          rsync -e "ssh -i ~/.ssh/id_rsa_github -p 1022" -rv  ./* ${{ secrets.SSH_LOGIN_PAIR }}:/www/apache/domains/www.failover.ee/htdocs/ga
