@@ -17,7 +17,7 @@ jobs:
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_AUTH_KEY }}" > ~/.ssh/id_rsa_github
           chmod 600 ~/.ssh/id_rsa_github
-          ssh-keyscan -H ${{ secrets.SERVER_IP_ADDRESS }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_IP_ADDRESS:1022 }} >> ~/.ssh/known_hosts
       - name: Copy files to server
         run: |
           rsync -rv  ./* ${{ secrets.SSH_LOGIN_PAIR }}:/www/apache/domains/www.failover.ee/htdocs/ga
