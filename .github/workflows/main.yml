@@ -1,0 +1,23 @@
+name: Static deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://ga.failover.ee
+    steps:
+      - name: Checkout to main
+        uses: actions/checkout@main
+      - name: Pre-auth SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_AUTH_KEY }}" > ~/.ssh/id_rsa_github
+          chmod 600 ~/.ssh/id_rsa_github
+          ssh-keyscan -H ${{ secrets.SERVER_IP_ADDRESS }} >> ~/.ssh/known_hosts
+      - name: Copy files to server
+        run: |
+          rsync -rv  ./* ${{ secrets.SSH_LOGIN_PAIR }}:/www/apache/domains/www.failover.ee/htdocs/ga
